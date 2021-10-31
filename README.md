@@ -1,5 +1,7 @@
 #  <img src="https://img.shields.io/static/v1?label=&message=Terraform&color=purple" width="110" height="35"/>  IaC (Node Weight Tracker) Staging and Production Environments
 
+![terraform_tree](https://user-images.githubusercontent.com/83014719/139581019-99aec0ab-b950-41fc-ba4f-552cc3b55b0e.png)
+
 ### Install Terraform CLI
 * Download and install [Chocolatey](https://docs.chocolatey.org/en-us/choco/setup) Software Management.
 * Type `choco` or `choco -?`
@@ -13,8 +15,11 @@
 
 ## Configuration
 * Use `azurerm` as a [provider](https://www.terraform.io/docs/language/providers/configuration.html).
+* Create `.tfvars` file for your secret variables (for each environment):
+* ![tfvars_example](https://user-images.githubusercontent.com/83014719/139581369-708c1bee-1ccc-4f13-9d95-cd74fb27861e.png)
 
 ---
+
 ## Basic commands
 * `terraform` - make sure terraform CLI is installed
 * `terraform init` - initialize terraform Azure modules
