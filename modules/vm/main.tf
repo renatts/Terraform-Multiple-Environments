@@ -17,14 +17,14 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_os_disk {
-    name              = "osdisk-vm-prod-${var.index}"
+    name = "osdisk-${var.vm_name}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
   os_profile {
-    computer_name  = "web-server-prod-${var.index}"
+    computer_name  = "web-server-${var.index}"
     admin_username = var.admin_username
     admin_password = var.admin_password
   }
@@ -36,7 +36,7 @@ resource "azurerm_virtual_machine" "vm" {
 
 # This block defines the network interfaces which are associated with the db virtual machines.
 resource "azurerm_network_interface" "nic" {
-  name                = "${var.nic_name}-westeu-${var.index}"
+  name                = "nic-${var.vm_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
 

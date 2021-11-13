@@ -63,12 +63,6 @@ variable "asg_name" {
   description = "ASG name"
 }
 
-# Defines a variable for the network interface name
-variable "nic_name" {
-  type        = string
-  description = "NIC name in Azure"
-}
-
 variable "nic_app_association_instances" {
   type = number
 }

@@ -11,9 +11,6 @@ resource "azurerm_postgresql_server" "postgres" {
   administrator_login_password = var.admin_db_password
   version                      = "11"
   ssl_enforcement_enabled      = false
-  depends_on = [
-    azurerm_resource_group.rg
-  ]
 }
 
 ##########/ Create PostgreSQL server firewall rule /############################
@@ -21,9 +18,6 @@ resource "azurerm_postgresql_firewall_rule" "postgres_firewall" {
   name                = var.psql_firewall_name
   resource_group_name = var.resource_group_name
   server_name         = azurerm_postgresql_server.postgres.name
-  start_ip_address    = data.azurerm_public_ip.ip.ip_address
-  end_ip_address      = data.azurerm_public_ip.ip.ip_address
-   depends_on = [
-    azurerm_resource_group.rg
-  ]
+  start_ip_address    = var.public_ip
+  end_ip_address      = var.public_ip
 }

@@ -1,20 +1,20 @@
 variable "resource_group_name" {
-  type        = string
+  type = string
   description = "RG name in Azure"
 }
 
 variable "location" {
-  type        = string
+  type = string
   description = "RG location in Azure"
 }
 
 variable "vm_name" {
-  type        = string
+  type = string
   description = "VM name in Azure"
 }
 
 variable "vm_size" {
-  type        = string
+  type = string
   description = "VM size in Azure"
 }
 
@@ -24,12 +24,12 @@ variable "vnet_name" {
 }
 
 variable "admin_username" {
-  type        = string
+  type = string
   description = "Admin username for accessing vm"
 }
 
 variable "admin_password" {
-  type        = string
+  type = string
   description = "Admin password for accessing vm"
 }
 
@@ -44,8 +44,3 @@ variable "avset_id" {
 variable "snet_id" {
   type = string
 }
-
-variable "nic_name" {
-  type = string
-}
-

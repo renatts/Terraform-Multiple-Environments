@@ -193,8 +193,7 @@ resource "azurerm_availability_set" "avset" {
 
 ###########/ Create Virtual Machines for WEB /#####################################
 module "vm_app" {
-  source = "./modules/vm"
-
+  source = "../modules/vm"
   count               = var.app_instances
   index               = count.index
   vm_name             = "${var.vm_name}-${count.index}"
@@ -202,7 +201,6 @@ module "vm_app" {
   location            = var.location
   snet_id             = azurerm_subnet.snet_pub.id
   avset_id            = azurerm_availability_set.avset.id
-  nic_name            = var.nic_name
   admin_username      = var.admin_username
   admin_password      = var.admin_password
   resource_group_name = var.resource_group_name
@@ -213,3 +211,25 @@ module "vm_app" {
   ]
 }
 
+module "storage_account" {
+  source              = "../modules/storage-account"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  depends_on = [
+    azurerm_resource_group.rg
+  ]
+}
+
+module "postgresql_server" {
+  source              = "../modules/postgresql-server"
+  psql_name           = var.psql_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  admin_db_username   = var.admin_db_username
+  admin_db_password   = var.admin_db_password
+  public_ip           = azurerm_public_ip.public_ip.ip_address
+  psql_firewall_name  = var.psql_firewall_name
+  depends_on = [
+    azurerm_resource_group.rg
+  ]
+}

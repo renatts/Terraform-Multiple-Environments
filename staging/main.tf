@@ -15,7 +15,7 @@ resource "azurerm_virtual_network" "vnet" {
   ]
 }
 
-#############/ Create 2 subnets: Public and Private /##############################
+#############/ Create subnet /#####################################################
 resource "azurerm_subnet" "snet_pub" {
   name                 = var.subnet_name_public
   resource_group_name  = azurerm_resource_group.rg.name
@@ -40,6 +40,8 @@ resource "azurerm_network_security_group" "nsg" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
+  # Create an inbound rule for port 8080
+
   security_rule {
     name                                       = "AllowAllInbound"
     priority                                   = 200
@@ -51,6 +53,8 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix                      = "*"
     destination_application_security_group_ids = [azurerm_application_security_group.asg-public.id]
   }
+
+  # Create an inbound rule for SSH 
 
   security_rule {
     name                                       = "AllowSSHControllerToApp"
@@ -64,6 +68,8 @@ resource "azurerm_network_security_group" "nsg" {
     destination_application_security_group_ids = [azurerm_application_security_group.asg-public.id]
   }
 
+  # Create an inbound rule for SSH (VM to VM)
+
   security_rule {
     name                                       = "AllowSSH_VMtoVM"
     priority                                   = 225
@@ -76,6 +82,8 @@ resource "azurerm_network_security_group" "nsg" {
     destination_application_security_group_ids = [azurerm_application_security_group.asg-public.id]
   }
 
+  # Create an inbound rule for SSH (Admin IP Only)
+
   security_rule {
     name                                       = "AllowSSHToAdmin"
     priority                                   = 250
@@ -87,6 +95,8 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix                      = var.admin_ip_address
     destination_application_security_group_ids = [azurerm_application_security_group.asg-public.id]
   }
+
+  # Create an inbound rule for SSH (Deny All)
 
   security_rule {
     name                                       = "DenySSHToAll"
@@ -101,7 +111,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
-# This block creates the application security group for the app web servers
+###########/ Application security group for web servers /#########################
 resource "azurerm_application_security_group" "asg-public" {
   name                = "public-asg"
   location            = var.location
@@ -111,7 +121,7 @@ resource "azurerm_application_security_group" "asg-public" {
   ]
 }
 
-# This block creates the application security group association for the app web servers
+##########/ Application security group association for web servers /##############
 resource "azurerm_network_interface_application_security_group_association" "asg_association_app" {
   count                         = var.app_instances
   network_interface_id          = module.vm_app.*.nic_ids[count.index].id
@@ -193,8 +203,7 @@ resource "azurerm_availability_set" "avset" {
 
 ###########/ Create Virtual Machines for WEB /#####################################
 module "vm_app" {
-  source = "./modules/vm"
-
+  source              = "../modules/vm"
   count               = var.app_instances
   index               = count.index
   vm_name             = "${var.vm_name}-${count.index}"
@@ -202,7 +211,6 @@ module "vm_app" {
   location            = var.location
   snet_id             = azurerm_subnet.snet_pub.id
   avset_id            = azurerm_availability_set.avset.id
-  nic_name            = var.nic_name
   admin_username      = var.admin_username
   admin_password      = var.admin_password
   resource_group_name = var.resource_group_name
@@ -210,6 +218,29 @@ module "vm_app" {
 
   depends_on = [
     azurerm_virtual_network.vnet
+  ]
+}
+
+module "storage_account" {
+  source              = "../modules/storage-account"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  depends_on = [
+    azurerm_resource_group.rg
+  ]
+}
+
+module "postgresql_server" {
+  source              = "../modules/postgresql-server"
+  psql_name           = var.psql_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  admin_db_username   = var.admin_db_username
+  admin_db_password   = var.admin_db_password
+  public_ip           = azurerm_public_ip.public_ip.ip_address
+  psql_firewall_name  = var.psql_firewall_name
+  depends_on = [
+    azurerm_resource_group.rg
   ]
 }
 
