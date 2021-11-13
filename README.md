@@ -1,6 +1,6 @@
 #  <img src="https://img.shields.io/static/v1?label=&message=Terraform&color=purple" width="110" height="35"/>  IaC (Node Weight Tracker) Staging and Production Environments
 
-![terraform_tree](https://user-images.githubusercontent.com/83014719/139581019-99aec0ab-b950-41fc-ba4f-552cc3b55b0e.png)
+![terraform_tree](https://user-images.githubusercontent.com/83014719/141647037-b6688cf0-4dbf-48e6-bde7-6e2a1363e97e.png)
 
 ### Install Terraform CLI
 * Download and install [Chocolatey](https://docs.chocolatey.org/en-us/choco/setup) Software Management.
